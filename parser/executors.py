@@ -58,33 +58,49 @@ def check_and_split_aggregate(value: str) -> Tuple[str, str]:
     return field, aggr_func
 
 
+def aggr_min(data: List[Dict], field: str):
+    min_val = None
+    for row in data:
+        if not min_val:
+            min_val = row[field]
+        else:
+            min_val = row[field] if row[field] < min_val else min_val
+    return [{"min": min_val}]
+
+
+def aggr_max(data: List[Dict], field: str):
+    max_val = None
+    for row in data:
+        if not max_val:
+            max_val = row[field]
+        else:
+            max_val = row[field] if row[field] > max_val else max_val
+    return [{"max": max_val}]
+
+
+def aggr_avg(data: List[Dict], field: str):
+    avg = sum([row[field] for row in data]) / len(data)
+    return [{"avg": avg}]
+
+
+aggr_funcs = {
+    "min": aggr_min,
+    "max": aggr_max,
+    "avg": aggr_avg,
+}
+
+
 def execute_aggregate(data: List[Dict], value: str, columns: List[str]):
     """Выполняет аггрегацию"""
     field, aggr_func = check_and_split_aggregate(value)
     if field not in columns:
         raise Exception(f"Поля {field} нет в данных. Доступны: {columns}")
-    if aggr_func == "min":
-        min_val = None
-        for row in data:
-            if not min_val:
-                min_val = row[field]
-            else:
-                min_val = row[field] if row[field] < min_val else min_val
-        return [{"min": min_val}]
-    elif aggr_func == "max":
-        max_val = None
-        for row in data:
-            if not max_val:
-                max_val = row[field]
-            else:
-                max_val = row[field] if row[field] > max_val else max_val
-        return [{"max": max_val}]
-    elif aggr_func == "avg":
-        avg = sum([row[field] for row in data]) / len(data)
-        return [{"avg": avg}]
-    raise Exception(
-        "Не была предоставлена допустимая команда для аггрегации. Доступны: 'avg, min, max'"
-    )
+    aggr_func = aggr_funcs.get(aggr_func)
+    if not aggr_func:
+        raise Exception(
+            f"Не была предоставлена допустимая команда для аггрегации. Доступны: {aggr_funcs.keys()}"
+        )
+    return aggr_func(data, field)
 
 
 def find_executor(command_name: str) -> Callable:
