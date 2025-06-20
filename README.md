@@ -33,6 +33,8 @@ python main.py -w field(operand)value -a field=aggr_func input_file_name.csv
 python main.py -w brand=xiaomi products.csv
 ```
 Результат:
+
+
 ![](assets/where.png)
 
 2) -a
@@ -40,6 +42,8 @@ python main.py -w brand=xiaomi products.csv
 python main.py -a rating=avg products.csv
 ```
 Результат:
+
+
 ![](assets/aggr.png)
 
 3) -w + -a
@@ -47,6 +51,8 @@ python main.py -a rating=avg products.csv
 python main.py
 ```
 Результат:
+
+
 ![](assets/aggr+where.png)
 
 ## Дополнительная информация
