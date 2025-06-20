@@ -48,7 +48,7 @@ python main.py -a rating=avg products.csv
 
 3) -w + -a
 ```bazaar
-python main.py
+python main.py -w brand=xiaomi -a rating=avg products.csv
 ```
 Результат:
 
